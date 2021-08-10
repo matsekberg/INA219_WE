@@ -45,8 +45,6 @@ bool INA219_WE::init(){
     setMeasureMode(CONTINUOUS);
     setPGain(PG_320);
     setBusRange(BRNG_32);
-    shuntFactor = 1.0;
-    calc_overflow = false;
     
     return true;
 }
@@ -54,11 +52,6 @@ bool INA219_WE::init(){
 bool INA219_WE::reset_INA219(){
     byte ack = writeRegister(INA219_CONF_REG, INA219_RST); 
     return ack == 0;
-}
-
-void INA219_WE::setCorrectionFactor(float corr){
-    calValCorrected = calVal * corr;
-    writeRegister(INA219_CAL_REG, calValCorrected);
 }
 
 void INA219_WE::setADCMode(INA219_ADC_MODE mode){
@@ -91,23 +84,15 @@ void INA219_WE::setPGain(INA219_PGAIN gain){
     switch(devicePGain){
         case PG_40:
             calVal = 20480;
-            currentDivider_mA = 50.0;
-            pwrMultiplier_mW = 0.4;
             break;
         case PG_80:
             calVal = 10240;
-            currentDivider_mA = 25.0;
-            pwrMultiplier_mW = 0.8;
             break;
         case PG_160:
             calVal = 8192;
-            currentDivider_mA = 20.0;
-            pwrMultiplier_mW = 1.0;
             break;
         case PG_320:
             calVal = 4096;
-            currentDivider_mA = 10.0;
-            pwrMultiplier_mW = 2.0;
             break;
     }
     
@@ -122,46 +107,6 @@ void INA219_WE::setBusRange(INA219_BUS_RANGE range){
     currentConfReg |= deviceBusRange;
     writeRegister(INA219_CONF_REG, currentConfReg);
 }
-
-void INA219_WE::setShuntSizeInOhms(float shuntSize){
-    shuntFactor = shuntSize / 0.1;
-}
-
-float INA219_WE::getShuntVoltage_mV(){
-    int16_t val;
-    val = (int16_t) readRegister(INA219_SHUNT_REG);
-    return (val * 0.01);    
-}
-
-
-float INA219_WE::getBusVoltage_V(){
-    uint16_t val;
-    val = readRegister(INA219_BUS_REG);
-    val = ((val>>3) * 4);
-    return (val * 0.001);
-}
-
-
-float INA219_WE::getCurrent_mA(){
-    int16_t val;
-    val = (int16_t)readRegister(INA219_CURRENT_REG);
-    return (val / (currentDivider_mA * shuntFactor));
-}
-
-
-float INA219_WE::getBusPower(){
-    uint16_t val;
-    val = readRegister(INA219_PWR_REG);
-    return (val * pwrMultiplier_mW / shuntFactor);
-}
-
-bool INA219_WE::getOverflow(){
-    uint16_t val;
-    val = readRegister(INA219_BUS_REG);
-    bool ovf = (val & 1);
-    return ovf;
-}
-
 
 void INA219_WE::startSingleMeasurement(){
     uint16_t val = readRegister(INA219_BUS_REG); // clears CNVR (Conversion Ready) Flag
@@ -207,6 +152,12 @@ uint16_t INA219_WE::readRegister(uint8_t reg){
   regValue = (MSByte<<8) + LSByte;
   return regValue;
 }
+
+/************************************************ 
+    private functions
+*************************************************/
+
+
     
 
 

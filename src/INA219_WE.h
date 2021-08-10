@@ -85,23 +85,16 @@ public:
   
     bool init();
     bool reset_INA219();
-    void setCorrectionFactor(float corr);
     void setADCMode(INA219_ADC_MODE mode);
     void setMeasureMode(INA219_MEASURE_MODE mode);
     void setPGain(INA219_PGAIN gain);
     void setBusRange(INA219_BUS_RANGE range);
-    void setShuntSizeInOhms(float shuntSize);
-    float getShuntVoltage_mV();
-    float getBusVoltage_V();
-    float getCurrent_mA();
-    float getBusPower();
-    bool getOverflow();
     void startSingleMeasurement();
     void powerDown();
     void powerUp(); 
     uint8_t writeRegister(uint8_t reg, uint16_t val);
     uint16_t readRegister(uint8_t reg);
-    
+
 private:
     INA219_ADC_MODE deviceADCMode;
     INA219_MEASURE_MODE deviceMeasureMode;
@@ -110,12 +103,7 @@ private:
     TwoWire *_wire;
     int i2cAddress;
     uint16_t calVal;
-    uint16_t calValCorrected;
     uint16_t confRegCopy;
-    float shuntFactor; 
-    float currentDivider_mA;
-    float pwrMultiplier_mW;
-    bool calc_overflow;
 };
 
 #endif

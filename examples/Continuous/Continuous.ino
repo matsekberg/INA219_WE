@@ -78,32 +78,34 @@ void setup() {
 }
 
 void loop() {
-  float shuntVoltage_mV = 0.0;
-  float loadVoltage_V = 0.0;
-  float busVoltage_V = 0.0;
-  float current_mA = 0.0;
-  float power_mW = 0.0; 
-  bool ina219_overflow = false;
-  
-  shuntVoltage_mV = ina219.getShuntVoltage_mV();
-  busVoltage_V = ina219.getBusVoltage_V();
-  current_mA = ina219.getCurrent_mA();
-  power_mW = ina219.getBusPower();
-  loadVoltage_V  = busVoltage_V + (shuntVoltage_mV/1000);
-  ina219_overflow = ina219.getOverflow();
-  
-  Serial.print("Shunt Voltage [mV]: "); Serial.println(shuntVoltage_mV);
-  Serial.print("Bus Voltage [V]: "); Serial.println(busVoltage_V);
-  Serial.print("Load Voltage [V]: "); Serial.println(loadVoltage_V);
-  Serial.print("Current[mA]: "); Serial.println(current_mA);
-  Serial.print("Bus Power [mW]: "); Serial.println(power_mW);
-  if(!ina219_overflow){
-    Serial.println("Values OK - no overflow");
-  }
-  else{
-    Serial.println("Overflow! Choose higher PGAIN");
-  }
-  Serial.println();
+
+
+  uint16_t bus_reg = ina219.readRegister(INA219_BUS_REG);
+  uint16_t shunt_reg = ina219.readRegister(INA219_SHUNT_REG);
+
+  printf("\n");
+  printf("\nShunt reg   = %d", shunt_reg);
+  printf("\nBus reg     = %d", bus_reg);
+  printf("\nCurrent reg = %d", ina219.readRegister(INA219_CURRENT_REG));
+  printf("\nCal reg     = %d", ina219.readRegister(INA219_CAL_REG));
+  printf("\nConfig reg  = %04X \n", ina219.readRegister(INA219_CONF_REG));
+
+  float bus_voltage = 0.004 * (bus_reg >> 3);
+  float shunt_offset_V = -(SHUNT_VOLTAGE_OFFSET_FACTOR * bus_voltage);
+  float shunt_voltage_V = 0.000010 * shunt_reg;
+  float current = (shunt_voltage_V + shunt_offset_V) / SHUNT_RES;
+
+  if (current < 0.0) current = 0.0;
+
+  printf("\nShunt offset [V]:  %10.6f  \nShunt Voltage [V]: %10.6f  \nCurrent [A]:       %10.2f  \nBus voltage [V]:   %10.2f",
+         shunt_offset_V,
+         shunt_voltage_V,
+         current,
+         bus_voltage);
+
+
+  printf("\n\n-----------------------------------");
+
   
   delay(3000);
 }
