@@ -13,4 +13,4 @@ https://wolles-elektronikkiste.de/en/ina219-current-and-power-sensor (English)
 
 Note: Version 1.1.2 corrected a misspelling of "continuous" which might lead to backwards incompatibilities. You might need to change your code.  
 
-Note: Version 1.2.0 removed lot of methods and implemented corrections for input offset errors due to filtering resistors on Vin+ and Vin-.
+Note: Version 2.0.0 removed lot of methods and implemented corrections for input offset errors due to filtering resistors on Vin+ and Vin-.
