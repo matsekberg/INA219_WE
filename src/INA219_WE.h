@@ -89,6 +89,13 @@ public:
     void setMeasureMode(INA219_MEASURE_MODE mode);
     void setPGain(INA219_PGAIN gain);
     void setBusRange(INA219_BUS_RANGE range);
+    void setOffsetCorrection(uint16_t shuntBits, float atLoadVoltage);
+    void setShuntCharacteristics(float shuntVoltage, float atCurrent);
+
+    float getShuntVoltage();
+    float getCurrent();
+    float getLoadVoltage();
+
     void startSingleMeasurement();
     void powerDown();
     void powerUp(); 
@@ -104,6 +111,10 @@ private:
     int i2cAddress;
     uint16_t calVal;
     uint16_t confRegCopy;
+    uint16_t _shuntBits = 46;
+    float _atLoadVoltage = 12.5;
+    float _shuntVoltage = 0.075;
+    float _atCurrent = 100.0;
 };
 
 #endif

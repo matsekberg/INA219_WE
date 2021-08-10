@@ -108,6 +108,26 @@ void INA219_WE::setBusRange(INA219_BUS_RANGE range){
     writeRegister(INA219_CONF_REG, currentConfReg);
 }
 
+void setOffsetCorrection(uint16_t shuntBits, float atLoadVoltage) {
+    _shuntBits = shuntBits;
+    _atLoadVoltage = atLoadVoltage;
+}
+
+void setShuntCharacteristics(float shuntVoltage, float atCurrent) {
+    _shuntVoltage = shuntVoltage;
+    _atCurrent = atCurrent;
+}
+
+float getShuntVoltage() {
+
+}
+float getCurrent() {
+
+}
+float getLoadVoltage() {
+    
+}
+
 void INA219_WE::startSingleMeasurement(){
     uint16_t val = readRegister(INA219_BUS_REG); // clears CNVR (Conversion Ready) Flag
     val = readRegister(INA219_CONF_REG);
