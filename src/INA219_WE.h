@@ -94,11 +94,9 @@ public:
 
     float getShuntVoltage();
     float getCurrent();
-    float getLoadVoltage();
+    float getBusVoltage();
+    float getOffsetCorrection();
 
-    void startSingleMeasurement();
-    void powerDown();
-    void powerUp(); 
     uint8_t writeRegister(uint8_t reg, uint16_t val);
     uint16_t readRegister(uint8_t reg);
 
@@ -112,9 +110,10 @@ private:
     uint16_t calVal;
     uint16_t confRegCopy;
     uint16_t _shuntBits = 46;
-    float _atLoadVoltage = 12.5;
+    float _atBusVoltage = 12.5;
     float _shuntVoltage = 0.075;
     float _atCurrent = 100.0;
+    float _offsetCorrection;
 };
 
 #endif

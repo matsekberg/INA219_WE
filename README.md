@@ -1,7 +1,8 @@
 # INA219_WE
 An Arduino library for the INA219 current and power sensor module.
 
-It allows to set various ADC modes, gains and bus voltage ranges. Continuous mode, triggered mode, power down and ADC off mode are supported. Default shunt size is 0.1 ohms, but you can change it. 
+It allows to set various ADC modes, gains and bus voltage ranges. Continuous mode, power down and ADC off mode are supported. Default shunt size is 75mV at 100A, but you can change it. 
+It has been enhanced with shunt voltage calibration
 
 I attached a list of public functions and a fritzing scheme for the example sketches.
 

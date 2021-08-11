@@ -45,7 +45,6 @@ bool INA219_WE::init(){
     setMeasureMode(CONTINUOUS);
     setPGain(PG_320);
     setBusRange(BRNG_32);
-    
     return true;
 }
 
@@ -108,9 +107,9 @@ void INA219_WE::setBusRange(INA219_BUS_RANGE range){
     writeRegister(INA219_CONF_REG, currentConfReg);
 }
 
-void setOffsetCorrection(uint16_t shuntBits, float atLoadVoltage) {
+void setOffsetCorrection(uint16_t shuntBits, float atBusVoltage) {
     _shuntBits = shuntBits;
-    _atLoadVoltage = atLoadVoltage;
+    _atBusVoltage = atBusVoltage;
 }
 
 void setShuntCharacteristics(float shuntVoltage, float atCurrent) {
@@ -118,35 +117,28 @@ void setShuntCharacteristics(float shuntVoltage, float atCurrent) {
     _atCurrent = atCurrent;
 }
 
+
+float getOffsetCorrection() {
+    return  -(_shuntBits * 0.000010 / _atBusVoltage) * getBusVoltage());
+}
+
+float getBusVoltage() {
+    uint16_t bus_reg = ina219.readRegister(INA219_BUS_REG);
+    float bus_voltage = 0.004 * (bus_reg >> 3);
+    return bus_voltage;
+}
+
+
 float getShuntVoltage() {
-
+    return 0.000010 * ina219.readRegister(INA219_SHUNT_REG) + getOffsetCorrection();
 }
+
+    float _shuntVoltage = 0.075;
+    float _atCurrent = 100.0;
+
 float getCurrent() {
-
+    return getShuntVoltage() / (_shuntVoltage / _atCurrent);
 }
-float getLoadVoltage() {
-    
-}
-
-void INA219_WE::startSingleMeasurement(){
-    uint16_t val = readRegister(INA219_BUS_REG); // clears CNVR (Conversion Ready) Flag
-    val = readRegister(INA219_CONF_REG);
-    writeRegister(INA219_CONF_REG, val);
-    uint16_t convReady = 0x0000;
-    while(!convReady){
-        convReady = ((readRegister(INA219_BUS_REG)) & 0x0002); // checks if sampling is completed
-    }
-}
-
-void INA219_WE::powerDown(){
-    confRegCopy = readRegister(INA219_CONF_REG);
-    setMeasureMode(POWER_DOWN);
-}
-
-void INA219_WE::powerUp(){
-    writeRegister(INA219_CONF_REG, confRegCopy);
-    delayMicroseconds(40);  
-}   
 
 uint8_t INA219_WE::writeRegister(uint8_t reg, uint16_t val){
   _wire->beginTransmission(i2cAddress);
