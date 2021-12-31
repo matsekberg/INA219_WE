@@ -18,24 +18,24 @@ INA219_BUS_RANGE	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-reset_INA219	KEYWORD2
 init	KEYWORD2
-setCorrectionFactor	KEYWORD2
+reset_INA219	KEYWORD2
 setADCMode	KEYWORD2
 setMeasureMode	KEYWORD2
 setPGain	KEYWORD2
 setBusRange	KEYWORD2
-setShuntSizeInOhms	KEYWORD2
-getShuntVoltage_mV	KEYWORD2
+setOffsetCorrection	KEYWORD2
+setShuntCharacteristics	KEYWORD2
+setShuntCorrection KEYWORD2
+
+getShuntVoltage	KEYWORD2
+getCurrent	KEYWORD2
 getBusVoltage	KEYWORD2
-getCurrent_mA	KEYWORD2
-getBusPower	KEYWORD2
-getOverflow	KEYWORD2
-startSingleMeasurement	KEYWORD2
-powerDown	KEYWORD2
-powerUp	KEYWORD2
+getOffsetCorrection	KEYWORD2
 
-
+writeRegister	KEYWORD2
+readRegister	KEYWORD2
+    
 #######################################
 # Constants (LITERAL1)
 #######################################
@@ -63,3 +63,11 @@ PG_160	LITERAL1
 PG_320	LITERAL1
 BRNG_16	LITERAL1
 BRNG_32	LITERAL1
+
+INA219_ADDRESS      LITERAL1
+INA219_CONF_REG     LITERAL1
+INA219_SHUNT_REG    LITERAL1
+INA219_BUS_REG      LITERAL1
+INA219_PWR_REG      LITERAL1
+INA219_CURRENT_REG  LITERAL1
+INA219_CAL_REG      LITERAL1

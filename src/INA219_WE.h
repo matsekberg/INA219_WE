@@ -28,13 +28,13 @@
 #include <Wire.h>
 
 /* registers */
-#define INA219_ADDRESS      0x40
-#define INA219_CONF_REG     0x00 //Configuration Register
-#define INA219_SHUNT_REG    0x01 //Shunt Voltage Register
-#define INA219_BUS_REG      0x02 //Bus Voltage Register
-#define INA219_PWR_REG      0x03 //Power Register 
-#define INA219_CURRENT_REG  0x04 //Current flowing through Shunt
-#define INA219_CAL_REG      0x05 //Calibration Register 
+#define INA219_ADDRESS      ((uint8_t)0x40)
+#define INA219_CONF_REG     ((uint8_t)0x00) //Configuration Register
+#define INA219_SHUNT_REG    ((uint8_t)0x01) //Shunt Voltage Register
+#define INA219_BUS_REG      ((uint8_t)0x02) //Bus Voltage Register
+#define INA219_PWR_REG      ((uint8_t)0x03) //Power Register 
+#define INA219_CURRENT_REG  ((uint8_t)0x04) //Current flowing through Shunt
+#define INA219_CAL_REG      ((uint8_t)0x05) //Calibration Register 
 
 /* parameters */
 #define INA219_RST             0x8000
@@ -78,19 +78,19 @@ class INA219_WE
 {
 public: 
     // Constructors: if not passed 0x40 / Wire will be set as address / wire object
-    INA219_WE(int addr);
+    INA219_WE(uint8_t addr);
     INA219_WE();
-    INA219_WE(TwoWire *w, int addr);
+    INA219_WE(TwoWire *w, uint8_t addr);
     INA219_WE(TwoWire *w);
   
     bool init();
     bool reset_INA219();
     void setADCMode(INA219_ADC_MODE mode);
-    void setMeasureMode(INA219_MEASURE_MODE mode);
     void setPGain(INA219_PGAIN gain);
     void setBusRange(INA219_BUS_RANGE range);
     void setOffsetCorrection(uint16_t shuntBits, float atLoadVoltage);
     void setShuntCharacteristics(float shuntVoltage, float atCurrent);
+    void setShuntCorrection(float k);
 
     float getShuntVoltage();
     float getCurrent();
@@ -98,15 +98,18 @@ public:
     float getOffsetCorrection();
 
     uint8_t writeRegister(uint8_t reg, uint16_t val);
-    uint16_t readRegister(uint8_t reg);
+    uint16_t readInaRegister(uint8_t reg);
+    uint8_t getAddress();
 
 private:
+    void setMeasureMode(INA219_MEASURE_MODE mode);
+
     INA219_ADC_MODE deviceADCMode;
     INA219_MEASURE_MODE deviceMeasureMode;
     INA219_PGAIN devicePGain;
     INA219_BUS_RANGE deviceBusRange;
     TwoWire *_wire;
-    int i2cAddress;
+    uint8_t i2cAddress;
     uint16_t calVal;
     uint16_t confRegCopy;
     uint16_t _shuntBits = 46;
@@ -114,6 +117,7 @@ private:
     float _shuntVoltage = 0.075;
     float _atCurrent = 100.0;
     float _offsetCorrection;
+    float _shunt_k = 1.00;
 };
 
 #endif
